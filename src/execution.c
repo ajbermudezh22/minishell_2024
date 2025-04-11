@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: albermud <albermud@student.42.fr>          +#+  +:+       +#+        */
+/*   By: albbermu <albbermu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 13:12:51 by fefa              #+#    #+#             */
-/*   Updated: 2025/04/06 15:55:48 by albermud         ###   ########.fr       */
+/*   Updated: 2025/04/11 16:32:21 by albbermu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@ int	error_message(char *path)
 {
 	struct stat	path_stat;
 
+	if (!path || ft_strlen(path) == 0)
+		return (UNKNOWN_COMMAND);
 	ft_putstr_fd("minishell: ", STDERR_FILENO);
 	ft_putstr_fd(path, STDERR_FILENO);
 	if (stat(path, &path_stat) == -1)
@@ -80,7 +82,7 @@ char	*get_path_bin(t_env *env, char *cmd)
 int	ft_execve(char *path, t_exec_cmd *cmd, t_mini *shell)
 {
 	pid_t	pid;
-	int		res;
+	int		status;
 
 	pid = fork();
 	if (pid == -1)
@@ -93,8 +95,12 @@ int	ft_execve(char *path, t_exec_cmd *cmd, t_mini *shell)
 			exit(error_message(path));
 		}
 	}
-	waitpid(pid, &res, 0);
-	return (res);
+	waitpid(pid, &status, 0);
+	if (WIFEXITED(status))
+		return (WEXITSTATUS(status));
+	if (WIFSIGNALED(status))
+		return (128 + WTERMSIG(status));
+	return (ERROR);
 }
 
 int	exec_binary(t_mini *shell, t_exec_cmd *exec)
@@ -117,13 +123,20 @@ int	exec_binary(t_mini *shell, t_exec_cmd *exec)
 
 int	execute(t_mini *shell, t_exec_cmd *exec)
 {
-	if (!exec)
-		return (ERROR);
+	if (!exec || !exec->cmd)
+	{
+		shell->exit_code = 0;
+		return (0);
+	}
 	if (is_builtin(exec->cmd))
 	{
-		return (exec_builtin(shell, exec));
+		shell->exit_code = exec_builtin(shell, exec);
+		return (shell->exit_code);
 	}
 	else
-		return (exec_binary(shell, exec));
+	{
+		shell->exit_code = exec_binary(shell, exec);
+		return (shell->exit_code);
+	}
 	return (ERROR);
 }

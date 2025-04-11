@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: albermud <albermud@student.42.fr>          +#+  +:+       +#+        */
+/*   By: albbermu <albbermu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 09:09:23 by fefa              #+#    #+#             */
-/*   Updated: 2025/04/05 18:37:01 by albermud         ###   ########.fr       */
+/*   Updated: 2025/04/11 15:49:14 by albbermu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,7 @@ typedef struct s_mini
 	t_env	*secret;
 	t_cmd	*cmd; //list of commands, doesnt make sense
 	bool	exit;
+	int		exit_code;
 }	t_mini;
 
 //builtin
@@ -128,6 +129,9 @@ bool	is_valid_env_node(t_env node);
 void	add_env_end(t_env **env, t_env *new);
 char	*update_node(t_env *env, char *new_value);
 
+// expand_var.c
+char	*expand_variable(char *str, t_mini *mini);
+
 //free.c
 void	free_shell(t_mini *shell);
 void	free_exec_cmd(t_exec_cmd *exec);
@@ -136,7 +140,7 @@ void	free_env(t_env *env);
 //initialize.c
 void	init(t_mini *shell, char **env);
 void	create_cmd(char *input, t_mini *shell);
-void	create_exec_cmd(t_exec_cmd *exec, t_token *token);
+void	create_exec_cmd(t_exec_cmd *exec, t_token *token, t_mini *shell);
 
 //mini.c
 void	minishell(t_mini *shell);
@@ -145,7 +149,7 @@ void	minishell(t_mini *shell);
 bool	is_open_quotes(char *line);
 
 //pipe.c
-int		pipex(t_mini *shell);
+int		pipex(t_mini *shell, t_exec_cmd *cmd);
 
 //redirect
 void	redir(t_mini *shell, t_token *token);

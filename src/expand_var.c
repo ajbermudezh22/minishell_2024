@@ -1,39 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipe.c                                             :+:      :+:    :+:   */
+/*   expand_var.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: albbermu <albbermu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/14 09:09:23 by fefa              #+#    #+#             */
-/*   Updated: 2025/04/11 11:12:08 by albbermu         ###   ########.fr       */
+/*   Created: 2025/04/11 14:04:07 by albbermu          #+#    #+#             */
+/*   Updated: 2025/04/11 14:41:18 by albbermu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	pipex(t_mini *shell, t_exec_cmd *cmd)
+char	*expand_variable(char *str, t_mini *shell)
 {
-	int		pipefd[2];
+	t_env	*env_var;
 
-	if (pipe(pipefd) == -1)
+	if (!ft_strcmp(str, "$?"))
+		return (ft_itoa(shell->exit_code));
+	if (str[0] == '$' && str[1])
 	{
-		perror("pipe failed");
-		return (ERROR);
+		env_var = get_env(shell->env, &str[1]);
+		if (env_var && env_var->value)
+			return (ft_strdup(env_var->value));
+		return (ft_strdup(""));
 	}
-	if (fork() == 0)
-	{
-		close(pipefd[0]);
-		dup2(pipefd[1], STDOUT_FILENO);
-		close(pipefd[1]);
-		if (execute(shell, cmd) == ERROR)
-		{
-			perror("execute failed");
-			exit(EXIT_FAILURE);
-		}
-	}
-	close(pipefd[1]);
-	dup2(pipefd[0], STDIN_FILENO);
-	close(pipefd[0]);
-	return (P_PARENT);
+	return (ft_strdup(str));
 }

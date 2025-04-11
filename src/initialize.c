@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   initialize.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: albermud <albermud@student.42.fr>          +#+  +:+       +#+        */
+/*   By: albbermu <albbermu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 22:35:35 by fefa              #+#    #+#             */
-/*   Updated: 2025/04/09 11:33:29 by albermud         ###   ########.fr       */
+/*   Updated: 2025/04/11 16:41:51 by albbermu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ void	create_cmd(char *input, t_mini *shell)
 	free(array);
 }
 
-void	create_exec_cmd(t_exec_cmd *exec, t_token *token)
+void	create_exec_cmd(t_exec_cmd *exec, t_token *token, t_mini *shell)
 {
 	t_token	*tmp;
 	int		arg_count;
@@ -104,10 +104,10 @@ void	create_exec_cmd(t_exec_cmd *exec, t_token *token)
 	arg_count = 0;
 	while (tmp && tmp->type == ARG)
 	{
-		exec->args[arg_count] = ft_strdup(tmp->str);
+		exec->args[arg_count] = expand_variable(tmp->str, shell);
 		if (!exec->args[arg_count])
 		{
-			perror("ft_strdup failed");
+			perror("expand_variable failed");
 			free_array(exec->args);
 			exec->args = NULL;
 			return ;
@@ -116,10 +116,18 @@ void	create_exec_cmd(t_exec_cmd *exec, t_token *token)
 		tmp = tmp->next;
 	}
 	exec->args[arg_count] = NULL;
-	exec->cmd = ft_strdup(token->str);
+	if (!ft_strcmp(token->str, "$?"))
+	{
+		ft_putnbr_fd(shell->exit_code, STDOUT_FILENO);
+		ft_putchar_fd('\n', STDOUT_FILENO);
+		exec->cmd = NULL;
+	}
+	else
+		exec->cmd = expand_variable(token->str, shell);
 	if (!exec->cmd)
 	{
-		perror("ft_strdup failed");
+		if (ft_strcmp(token->str, "$?") != 0)
+            perror("expand_variable failed");
 		free_array(exec->args);
 		exec->args = NULL;
 		return ;
