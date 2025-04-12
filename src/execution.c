@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: albbermu <albbermu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: albermud <albermud@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 13:12:51 by fefa              #+#    #+#             */
-/*   Updated: 2025/04/11 16:32:21 by albbermu         ###   ########.fr       */
+/*   Updated: 2025/04/12 20:10:43 by albermud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ int	ft_execve(char *path, t_exec_cmd *cmd, t_mini *shell)
 	pid = fork();
 	if (pid == -1)
 		return (ERROR);
-	if (pid == 0) // child
+	if (pid == 0)
 	{
 		if (execve(path, cmd->args, shell->arr_env) == -1)
 		{
@@ -105,20 +105,27 @@ int	ft_execve(char *path, t_exec_cmd *cmd, t_mini *shell)
 
 int	exec_binary(t_mini *shell, t_exec_cmd *exec)
 {
-	char	*path;
-	int		res;
+    char	*path;
+    int		res;
 
-	path = get_path_bin(shell->env, exec->cmd);
-	if (path)
-	{
-		res = ft_execve(path, exec, shell);
-		free(path);
-	}
-	else
-	{
-		res = ft_execve(exec->cmd, exec, shell);
-	}
-	return (res);
+    if (is_builtin(exec->cmd))
+    {
+        ft_putstr_fd("minishell: ", STDERR_FILENO);
+        ft_putstr_fd(exec->cmd, STDERR_FILENO);
+        ft_putendl_fd(": command not found", STDERR_FILENO);
+        return (127);
+    }
+    path = get_path_bin(shell->env, exec->cmd);
+    if (path)
+    {
+        res = ft_execve(path, exec, shell);
+        free(path);
+    }
+    else
+    {
+        res = ft_execve(exec->cmd, exec, shell);
+    }
+    return (res);
 }
 
 int	execute(t_mini *shell, t_exec_cmd *exec)

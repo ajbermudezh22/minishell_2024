@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   initialize.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: albbermu <albbermu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: albermud <albermud@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 22:35:35 by fefa              #+#    #+#             */
-/*   Updated: 2025/04/11 16:41:51 by albbermu         ###   ########.fr       */
+/*   Updated: 2025/04/12 21:21:36 by albermud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,21 +25,6 @@ void	add_cmd_end(t_cmd **first, t_cmd *new)
 	while (tmp ->next)
 		tmp = tmp->next;
 	tmp->next = new;
-}
-
-void	create_node_cmd(t_cmd **cmd, char *str)
-{
-	t_cmd	*new;
-
-	new = malloc(sizeof(t_cmd));
-	if (!new)
-		return ;
-	*cmd = new;
-	new->cmd = str;
-	new->words = ft_split_special(str, " ");
-	new->next = NULL;
-	new->tokens = NULL;
-	create_tokens(new);
 }
 
 void	create_cmd(char *input, t_mini *shell)

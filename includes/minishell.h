@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: albbermu <albbermu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: albermud <albermud@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 09:09:23 by fefa              #+#    #+#             */
-/*   Updated: 2025/04/11 15:49:14 by albbermu         ###   ########.fr       */
+/*   Updated: 2025/04/12 21:22:25 by albermud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,14 +81,6 @@ typedef struct s_token
 	t_token	*prev;
 }	t_token;
 
-typedef struct s_cmd
-{
-	char	*cmd;
-	char	**words;
-	t_token	*tokens;
-	t_cmd	*next;
-}	t_cmd;
-
 typedef struct s_mini
 {
 	int		fdin;
@@ -104,16 +96,24 @@ typedef struct s_mini
 	int		exit_code;
 }	t_mini;
 
+typedef struct s_cmd
+{
+	char	*cmd;
+	char	**words;
+	t_token	*tokens;
+	t_cmd	*next;
+}	t_cmd;
+
 //builtin
 bool	exec_builtin(t_mini *shell, t_exec_cmd *cmd);
 bool	is_builtin(char *cmd);
-bool	ft_cd(t_env *env, char *arg);
+bool	ft_cd(t_mini *shell, char **args);
 bool	ft_echo(char **args);
 bool	ft_pwd(void);
 bool	ft_env(t_env *env);
-bool	ft_unset(t_env *env, char *unset);
+int		ft_unset(t_env **env, char *args[]);
 bool	ft_exit(t_mini *shell, char **args);
-bool	ft_export(char *arg, t_env *env, t_env *secret);
+bool	ft_export(char *args[], t_env *env, t_env *secret);
 
 //execution.c
 int		execute(t_mini *shell, t_exec_cmd *cmd);
@@ -174,6 +174,7 @@ void	free_array(char **array);
 void	free_node(t_env *env);
 
 //util.c
+void	ft_join_free(char **s1, char *s2);
 void	joint_into_array_arg(char ***array, t_token *token);
 void	join_into_str(char **str, char **array, char *delimitador);
 

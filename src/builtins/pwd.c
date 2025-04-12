@@ -6,7 +6,7 @@
 /*   By: albermud <albermud@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 21:51:40 by fefa              #+#    #+#             */
-/*   Updated: 2025/04/05 18:41:45 by albermud         ###   ########.fr       */
+/*   Updated: 2025/04/12 12:46:45 by albermud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ bool	ft_pwd(void)
 	{
 		ft_putstr_fd(buffer, STDOUT_FILENO);
 		ft_putstr_fd("\n", STDOUT_FILENO);
-		return (SUCCESS);
+		return (0);
 	}
-	return (ERROR);
+	return (1);
 }

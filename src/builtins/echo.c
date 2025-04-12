@@ -6,7 +6,7 @@
 /*   By: albermud <albermud@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 19:16:30 by fefa              #+#    #+#             */
-/*   Updated: 2025/04/05 18:38:49 by albermud         ###   ########.fr       */
+/*   Updated: 2025/04/12 12:29:23 by albermud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,5 +56,5 @@ bool	ft_echo(char **args)
 	}
 	if (newline)
 		ft_putstr_fd("\n", STDOUT_FILENO);
-	return (SUCCESS);
+	return (0);
 }
